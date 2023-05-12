@@ -1,6 +1,6 @@
 # -LearnGenie--AI-powered-learning-app
 
-LearnGenie: AI-Powered Learning App
+LearnGenie: AI-Powered Learning App  http://kidusb.pythonanywhere.com/
 
 LearnGenie is an innovative, AI-powered learning app designed to provide users with a personalized and engaging educational experience. Powered by OpenAI's cutting-edge Davinci library and DALL-E API, this app enables users to learn about virtually any topic, from academic subjects to professional skills and personal interests.
 
