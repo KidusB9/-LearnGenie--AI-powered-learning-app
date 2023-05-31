@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import openai
 
 
-# Load your OpenAI API key from an environment variable or secret management service
+
 api_key = "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"
 openai.api_key = api_key
 
@@ -114,7 +114,7 @@ def profile():
 
 
 
-# ... (previous code)
+
 @app.route('/generate')
 @login_required
 def generate_learning_content():
@@ -135,7 +135,7 @@ def view_content(content_id):
     content = Content.query.get_or_404(content_id)
     return render_template('view_content.html', content=content)
 
-# ... (rest of the code)
+
 
 
 def _generate_learning_content(user_interest, prompt):
@@ -169,7 +169,7 @@ def recommend_content(content_id, top_n=5):
     contents = Content.query.all()
     content_data = [{'id': content.id, 'text': content.title + ' ' + content.description} for content in contents]
 
-    # Create a mapping from content ID to index in the contents list
+  
     id_to_index = {content.id: index for index, content in enumerate(contents)}
 
     df = pd.DataFrame(content_data)
@@ -178,7 +178,7 @@ def recommend_content(content_id, top_n=5):
 
     cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix)
 
-    # Use the mapping to get the correct index for the content_id
+   
     index = id_to_index[content_id]
     sim_scores = list(enumerate(cosine_similarities[index]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
