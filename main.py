@@ -1,7 +1,7 @@
 import openai
 import json
 
-# Load your OpenAI API key from an environment variable or secret management service
+
 api_key = "your_openai_api_key"
 openai.api_key = api_key
 
