@@ -1,0 +1,108 @@
+<!-- generated_content.html -->
+{% extends "base.html" %}
+
+{% block title %}Generated Content{% endblock %}
+
+{% block content %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h1, h2 {
+            margin-bottom: 1em;
+            text-align: center;
+            background-color: #1a73e8;
+            color: white;
+            padding: 1em;
+        }
+
+        p {
+            color: #34495e;
+            line-height: 1.5;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            color: #1a73e8;
+            text-decoration: none;
+            margin-top: 2em;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .generated-content {
+            font-size: 1.1em;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2em;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+       .content {
+
+        background-color: #f2f2f2;
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+           .content-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .content-list li {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .content-list li:hover {
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+
+    <h1>Generated Content</h1>
+    <div class="generated-content">
+        {{ content | safe }}
+        {% if image_url %}
+            <div class="generated-image">
+                <img src="{{ image_url }}" alt="Generated image">
+            </div>
+        {% endif %}
+    </div>
+
+    <h2>{{Title}}</h2>
+    <p>{{ description }}</p>
+    <div class="content">
+        <ul class="content-list">
+            {% for line in content.split('\n') %}
+                {% if line.strip() %}
+                    <li>
+                        <a href="{{ url_for('detailed_content', prompt=line.strip()) }}">{{ line.strip() }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+
+    </script>
+{% endblock %}

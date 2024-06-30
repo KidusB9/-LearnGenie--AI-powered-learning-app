@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ content.title }}
+{% endblock %}
+
+{% block content %}
+    <h1>{{ content.title }}</h1>
+    <p>{{ content.description }}</p>
+
+    <form action="{{ url_for('view_content', content_id=content.id) }}" method="post">
+        <label for="progress">Your progress:</label>
+        <input type="range" id="progress" name="progress" min="0" max="100" value="{{ progress.progress if progress else 0 }}">
+        <span>{{ progress.progress if progress else 0 }}%</span>
+        <input type="submit" value="Save Progress">
+    </form>
+    
+    <!-- Add a new section for recommendations -->
+    <h2>Recommended Content</h2>
+    <div id="recommendations">
+        <!-- Recommendations will be loaded here -->
+    </div>
+
+    <!-- Include the JavaScript code to fetch and display recommendations -->
+    <script>
+        $(document).ready(function() {
+            // Fetch recommendations when the page is loaded
+            fetchRecommendations();
+        });
+
+        function fetchRecommendations() {
+            $.ajax({
+                url: "{{ url_for('get_recommendations', content_id=content.id) }}",
+                method: "GET",
+                dataType: "json",
+                success: function(response) {
+                    // Display the recommended content
+                    let recommendations = response.recommendations;
+                    let html = '<ul>';
+                    for (let i = 0; i < recommendations.length; i++) {
+                        let rec = recommendations[i];
+                        html += `<li><a href="{{ url_for('view_content', content_id=0) }}`.replace(/0$/, rec.id) + '">' + rec.title + '</a></li>';
+                    }
+                    html += '</ul>';
+                    $('#recommendations').html(html);
+                },
+                error: function() {
+                    $('#recommendations').html('<p>Error loading recommendations.</p>');
+                }
+            });
+        }
+    </script>
+{% endblock %}

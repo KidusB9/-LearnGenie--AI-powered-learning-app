@@ -1,0 +1,63 @@
+<!-- generated_content.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #34495e;
+            line-height: 1.5;
+        }
+        a {
+            color: #2980b9;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .content {
+            margin-bottom: 20px;
+        }
+        .content-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .content-list li {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+        }
+        
+        .content-list li:hover {
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+    </style>
+
+    <h2>{{ content.title }}</h2>
+    <p>{{ content.description }}</p>
+    <div class="content">
+        <ul class="content-list">
+            {% for line in content.content.split('\n') %}
+                {% if line.strip() %}
+                    <li>
+                        <a href="{{ url_for('detailed_content', prompt=line.strip()) }}">{{ line.strip() }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Optional JavaScript code -->
+    <script>
+        // Add any JavaScript code here, if needed.
+    </script>
+{% endblock %}

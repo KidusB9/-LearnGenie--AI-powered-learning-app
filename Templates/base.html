@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}My Learning App{% endblock %}</title>
+    <!-- Add this line to include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    {% block head %}{% endblock %}
+    <style>
+        body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-image: linear-gradient(to bottom, #f5f5f5, #dcdcdc);
+}
+
+
+.form-container {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 20px auto;
+  padding: 20px;
+  box-shadow: 0px 3px 3px #ccc;
+}
+
+
+.form-container input[type="text"], .form-container input[type="submit"] {
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 18px;
+  padding: 10px;
+  margin-right: 10px;
+}
+
+
+.form-container input[type="submit"] {
+  background-color: #4CAF50;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.form-container input[type="submit"]:hover {
+  background-color: #1E7C31;
+}
+
+
+input[type="text"] {
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 16px;
+  padding: 5px;
+  margin-right: 5px;
+  width: 300px;
+}
+
+
+h3 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.0rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+
+
+
+
+
+
+
+
+.message {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 10px 0;
+  padding: 10px;
+  box-shadow: 0px 3px 3px #ccc;
+}
+
+form {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 10px 0;
+  padding: 10px;
+  box-shadow: 0px 3px 3px #ccc;
+}
+
+input[type="text"], input[type="submit"] {
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 16px;
+  padding: 5px;
+  margin-right: 5px;
+}
+
+input[type="submit"] {
+  background-color: #4CAF50;
+  color: #fff;
+  cursor: pointer;
+}
+
+input[type="text"]:hover, input[type="submit"]:hover {
+  background-color: #e6e6e6;
+}
+
+input[type="text"]:focus, input[type="submit"]:focus {
+  border-color: #4CAF50;
+}
+
+h1, h2, h3 {
+  font-family: "Montserrat", sans-serif;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+    </style>
+    <script>
+
+        $(document).ready(function() {
+
+
+
+
+
+    let currentUrl = window.location.href;
+    $('.nav-item').each(function() {
+        let navLink = $(this).children('.nav-link');
+        if (navLink.attr('href') == currentUrl) {
+            navLink.addClass('active');
+        }
+    });
+
+    // Initialize tooltips
+    $('[data-toggle="tooltip"]').tooltip();
+
+    // Handle form submission
+    $('form').submit(function(event) {
+        event.preventDefault();
+        let formData = $(this).serialize();
+        $.ajax({
+            url: $(this).attr('action'),
+            method: $(this).attr('method'),
+            data: formData,
+            success: function(response) {
+                // Handle the response
+            },
+            error: function() {
+                // Handle the error
+            }
+        });
+    });
+});
+
+
+
+
+  $('#learning-form').submit(function(event) {
+        let isValid = true;
+
+        const interest = $('input[name="interest"]').val();
+        if (!interest) {
+            $('#interest-error').text('Required');
+            isValid = false;
+        } else {
+            $('#interest-error').text('');
+        }
+
+        const prompt = $('input[name="prompt"]').val();
+        if (!prompt) {
+            $('#prompt-error').text('Required');
+            isValid = false;
+        } else {
+            $('#prompt-error').text('');
+        }
+
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+
+
+
+
+    </script>
+</head>
+<body>
+    <div>
+        {% for message in get_flashed_messages() %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% block content %}{% endblock %}
+    {% if current_user.is_authenticated %}
+    <div class="form-container" id="learning-container" style="display: none;">
+        <h3>Start Learning</h3>
+        <form action="{{ url_for('generate_learning_content') }}" method="get" id="learning-form" style="display: flex;">
+            <div style="margin-right: 10px;">
+                <input type="text" name="interest" placeholder="Your interest Topic" required>
+                <span id="interest-error" style="color:red;"></span> <!-- Error message for interest -->
+            </div>
+            <div style="margin-right: 10px;">
+                <input type="text" name="prompt" placeholder="Custom Detail" required>
+                <span id="prompt-error" style="color:red;"></span> <!-- Error message for prompt -->
+            </div>
+            <div>
+                <input type="submit" value="Generate Content">
+            </div>
+        </form>
+    </div>
+    {% endif %}
+</body>
+</html>

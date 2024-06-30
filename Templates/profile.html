@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+<h1 class="profile-heading">Your Profile</h1>
+<form class="profile-form" method="post">
+<div class="form-group">
+<label class="form-label" for="bio">Bio</label>
+<textarea class="form-input" id="bio" name="bio" rows="5" cols="50">{{ user_profile.bio if user_profile else '' }}</textarea>
+</div>
+<div class="form-group">
+<label class="form-label" for="interests">Interests</label>
+<input class="form-input" type="text" id="interests" name="interests" value="{{ user_profile.interests if user_profile else '' }}">
+</div>
+<button class="btn-submit" type="submit">Update Profile</button>
+</form>
+</div>
+<style>
+    /* reset styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* basic styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f8f8;
+    }
+
+    /* profile container */
+    .profile-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 50px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    /* profile heading */
+    .profile-heading {
+        font-size: 36px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    /* profile form */
+    .profile-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* form group */
+    .form-group {
+        margin-bottom: 30px;
+    }
+
+    /* form label */
+    .form-label {
+        font-size: 18px;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    /* form input */
+    .form-input {
+        font-size: 16px;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        transition: box-shadow 0.3s ease;
+    }
+    .form-input:focus {
+        box-shadow: 0 0 5px #007bff;
+    }
+
+    /* submit button */
+    .btn-submit {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        align-self: center;
+    }
+    .btn-submit:hover {
+        background-color: #0062cc;
+    }
+</style>
+
+<script>
+
+    const bio = document.querySelector('#bio');
+    const interests = document.querySelector('#interests');
+
+    // Auto-resize the bio textarea as the user types
+    bio.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+    });
+
+    // Add a character count limit to the interests input
+    interests.addEventListener('input', function() {
+// Define the maximum number of characters
+const maxChars = 100;
+if (this.value.length > maxChars) {
+this.value = this.value.substring(0, maxChars);
+}
+const charsLeft = maxChars - this.value.length;
+const charsLeftSpan = document.querySelector('#chars-left');
+charsLeftSpan.textContent = charsLeft;
+});
+</script>
+{% endblock %}

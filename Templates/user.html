@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table>
+        <tr valign="top">
+            <td><img src="{{ user.avatar(128) }}"></td>
+            <td>
+                <h1>User: {{ user.username }}</h1>
+                {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+                {% if user.last_seen %}<p>Last seen on: {{ user.last_seen }}</p>{% endif %}
+                {% if user == current_user %}
+                <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    <hr>
+    <h2>Contents</h2>
+    <ul>
+        {% for content in contents %}
+        <li><a href="{{ url_for('view_content', content_id=content.id) }}">{{ content.title }}</a></li>
+        {% endfor %}
+    </ul>
+    {% if current_user.is_authenticated and current_user.is_following(user) %}
+    <a href="{{ url_for('unfollow', user_id=user.id) }}" class="btn btn-primary">Unfollow</a>
+    {% elif current_user.is_authenticated %}
+    <a href="{{ url_for('follow', user_id=user.id) }}" class="btn btn-primary">Follow</a>
+    {% endif %}
+  <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 1em;
+            background-color: #1a73e8;
+            color: white;
+            padding: 1em;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2em;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 1em;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 0.5em;
+            font-size: 1.1em;
+            margin-bottom: 0.5em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 0.5em;
+            background-color: #1a73e8;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 1em;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0f66c4;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}

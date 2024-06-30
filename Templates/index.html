@@ -1,0 +1,542 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+        <!-- Active users counter -->
+        <div id="active-users-counter">
+            <!-- <span id="users-count">2000</span> -->
+
+        </div>
+
+        <h1>Welcome to Micro-Learning Platform</h1>
+        <h2 class="subtitle">Your AI professor. Utilizing LLM and Generative AI.</h2>
+
+        {% if not current_user.is_authenticated %}
+            <div class="auth-instructions">
+
+                <div class="auth-actions">
+                    <a class="action-link" href="{{ url_for('register') }}">Register</a>
+                    or
+                    <a class="action-link" href="{{ url_for('login') }}">Login</a>
+                    to start learning.
+                </div>
+            </div>
+        {% else %}
+    <div class="user-actions">
+        <a class="action-link" href="{{ url_for('profile') }}">My Profile</a>
+        <!-- Add this line for the logout button -->
+        <button id="logout-button" class="action-link">Logout</button>
+    </div>
+
+
+
+
+    <div class="form-container">
+        <h3>Start Learning</h3>
+        <form action="{{ url_for('generate_learning_content') }}" method="get" id="learning-form" style="display: flex;">
+            <div style="margin-right: 10px;">
+                <input type="text" name="interest" placeholder="Your interest Topic" required>
+                <span id="interest-error" style="color:red;"></span> <!-- Error message for interest -->
+            </div>
+            <div style="margin-right: 10px;">
+                <input type="text" name="prompt" placeholder="Custom Detail" required>
+                <span id="prompt-error" style="color:red;"></span> <!-- Error message for prompt -->
+            </div>
+            <div>
+                <input type="submit" value="Generate Content">
+            </div>
+        </form>
+    </div>
+
+
+
+
+     <div class="recommendation-section">
+                <h2>Recommended Contents</h2>
+                <div id="recommendation-results">
+                    <!-- Recommended contents will be displayed here -->
+                </div>
+
+
+
+            <div class="search-section">
+                <form id="search-form" method="get">
+                    <input type="text" name="q" placeholder="Search for content" required>
+                    <button type="submit">Search</button>
+                </form>
+                <div id="search-results">
+                    <!-- Search results will be displayed here -->
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+   <!-- Active Users Button -->
+{% if current_user.is_authenticated %}
+    <button id="toggle-users-button" class="action-link">Active Users</button>
+
+    <!-- Hidden Users Section -->
+    <div id="users-section" class="users-section">
+        <ul id="user-list">
+            {% for user in users %}
+            <li class="user-item">
+                <div class="user-profile">
+                    <div class="user-circle">{{ user.username[0].upper() }}</div>
+                    <a href="{{ url_for('user', user_id=user.id) }}" class="username">{{ user.username }}</a>
+                </div>
+                {% if user.profile %}
+                <!-- Display profile details -->
+                <span class="user-profile-details">
+                    Bio: {{ user.profile.bio }},
+                    Interests: {{ user.profile.interests }}
+                </span>
+                {% else %}
+                <span class="user-profile-details">
+                    Profile not set.
+                </span>
+                {% endif %}
+                <!-- Adding follow and unfollow buttons -->
+                <a href="{{ url_for('follow', user_id=user.id) }}" class="follow">Follow</a>
+                <a href="{{ url_for('unfollow', user_id=user.id) }}" class="unfollow">Unfollow</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+
+
+
+
+
+    <style>
+
+    #toggle-users-button {
+    margin-bottom: 20px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.user-profile-details {
+    font-size: 14px;
+    margin-top: 5px;
+    display: block;
+}
+
+.username {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.user-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    line-height: 40px;
+    text-align: center;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+
+
+
+
+.follow, .unfollow {
+    margin-left: 5px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+     border: 1px solid #ccc;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.follow:hover, .unfollow:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.1); /* Make it bigger */
+    transition: all 0.3s ease; /* Smooth transition */
+}
+
+.unfollow {
+    background-color: #f44336;
+}
+.users-section {
+    margin-top: 40px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.users-section h2 {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+#user-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#user-list li {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+}
+
+#user-list li a {
+    margin-right: 15px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+#user-list li a:hover {
+    text-decoration: underline;
+}
+
+#user-list li a.follow, #user-list li a.unfollow {
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+#user-list li a.unfollow {
+    background-color: #f44336;
+}
+
+#user-list li a.follow:hover, #user-list li a.unfollow:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+
+#logout-button {
+    position: fixed;
+    top: 20px;
+    right: 10px;
+    font-weight: 600;
+    color: var(--action-link-color);
+    padding: 0.5rem 1rem;
+    border-radius: 3px;
+    background: #f3f4f6;
+    box-shadow: var(--box-shadow);
+    transition: background-color 0.3s ease;
+}
+
+#logout-button:hover {
+    background: #e0e1e3;
+}
+ #active-users-counter {
+    position: fixed;
+    top: 25%;
+    right: 2%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    box-shadow: var(--box-shadow);
+}
+
+    :root {
+        --primary-color: #1a73e8;
+        --secondary-color: #1669c1;
+        --text-color: #4a4a4a;
+        --background-color: #f9f9f9;
+        --action-link-color: #1a73e8;
+        --box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background-color: var(--background-color);
+        margin: 0;
+        padding: 1.5rem;
+        color: var(--text-color);
+    }
+
+    h1, h2 {
+        margin-bottom: 1rem;
+        letter-spacing: -0.75px;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 3rem;
+        margin-top: 2rem;
+        color: var(--primary-color);
+        animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    h2.subtitle {
+        font-size: 1.5rem;
+        font-weight: 400;
+        color: var(--text-color);
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    a {
+        text-decoration: none;
+        transition: color 0.2s ease;
+        outline: none;
+    }
+
+    a:hover {
+        color: var(--primary-color);
+    }
+
+    .action-link {
+        font-weight: 600;
+        color: var(--action-link-color);
+        padding: 0.5rem 1rem;
+        border-radius: 3px;
+        background: #f3f4f6;
+        box-shadow: var(--box-shadow);
+        transition: background-color 0.3s ease;
+    }
+
+    .action-link:hover {
+        background: #e0e1e3;
+    }
+
+    #search-form {
+        display: flex;
+        margin: 2rem 0;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: var(--box-shadow);
+    }
+
+    #search-form input {
+        flex: 1;
+        padding: 0.8rem 1.2rem;
+        border: none;
+        font-size: 1rem;
+        border-right: 1px solid #eaeaea;
+    }
+
+    #search-form button {
+        background-color: var(--primary-color);
+        color: #ffffff;
+        padding: 0.8rem 1.5rem;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    #search-form button:hover {
+        background-color: var(--secondary-color);
+    }
+
+    #search-results ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    #search-results ul li {
+        padding: 1rem 1.5rem;
+        background-color: #ffffff;
+        box-shadow: var(--box-shadow);
+        margin-bottom: 1.5rem;
+        border-radius: 5px;
+        transition: transform 0.2s ease;
+    }
+
+    #search-results ul li:hover {
+        transform: translateY(-5px);
+    }
+
+    @keyframes glow {
+        from {
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #1a73e8;
+        }
+        to {
+            text-shadow: 0 0 15px #fff, 0 0 25px #1a73e8, 0 0 35px #1a73e8;
+        }
+    }
+</style>
+ <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const searchForm = document.getElementById('search-form');
+    const searchResultsContainer = document.getElementById('search-results');
+
+    if(searchForm) {
+        searchForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const searchQuery = event.target.querySelector('input[name="q"]').value;
+            const searchEndpoint = `{{ url_for("search") }}?q=${encodeURIComponent(searchQuery)}`;
+
+            fetch(searchEndpoint)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const { results } = data;
+
+                    if (results.length === 0) {
+                        searchResultsContainer.innerHTML = '<p>No results found.</p>';
+                    } else {
+                        const resultList = document.createElement('ul');
+
+                        results.forEach(content => {
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML = `
+                                <a class="content-link" href="{{ url_for("view_content", content_id=0) }}".replace("0", content.id)">
+                                    ${content.title}
+                                </a>
+                                <p>${content.description}</p>
+                            `;
+                            resultList.appendChild(listItem);
+                        });
+
+                        searchResultsContainer.innerHTML = '<h2>Search Results:</h2>';
+                        searchResultsContainer.appendChild(resultList);
+                    }
+                })
+                .catch(error => {
+                    searchResultsContainer.innerHTML = '<p>Error fetching results. Please try again later.</p>';
+                });
+        });
+    }
+});
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const logoutButton = document.getElementById('logout-button');
+    if (logoutButton) {
+        console.log("Found logout button");  // Debugging line
+        logoutButton.addEventListener('click', function() {
+            console.log("Logout button clicked");  // Debugging line
+            const confirmed = window.confirm('Are you sure you want to logout?');
+            if (confirmed) {
+                console.log("User confirmed logout");  // Debugging line
+                window.location.href = "{{ url_for('logout') }}";
+            }
+        });
+    } else {
+        console.log("Logout button not found");  // Debugging line
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const startingUsers = 0;
+    let currentUsers = startingUsers;
+
+    const userCountElem = document.getElementById('users-count');
+    if (userCountElem) {
+        userCountElem.textContent = new Intl.NumberFormat().format(currentUsers);
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+
+        function updateCounter() {
+            const incrementValues = [0, 0, 0, 0, 0, 0, 0];
+            const randomIncrement = incrementValues[getRandomInt(0, incrementValues.length - 1)];
+
+            currentUsers += randomIncrement;
+            userCountElem.textContent = new Intl.NumberFormat().format(currentUsers);
+
+
+            const nextInterval = getRandomInt(500, 3000);
+            setTimeout(updateCounter, nextInterval);
+        }
+
+        updateCounter();
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    const contentId = 1;
+    const recommendationEndpoint = `/content/${contentId}/recommendations`;
+
+    fetch(recommendationEndpoint)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const { recommendations } = data;
+
+            const dbRecommendations = recommendations.database_recommendations;
+            const learnGenieRecommendations = recommendations.learn_genie_recommendations;
+
+            let recommendationHTML = "";
+
+            if (dbRecommendations.length !== 0) {
+                recommendationHTML += "<h3>Database Recommendations:</h3><ul>";
+                dbRecommendations.forEach(content => {
+                    recommendationHTML += `
+                        <li>
+                            <a class="content-link" href="{{ url_for("view_content", content_id=0) }}".replace("0", content.id)">
+                                ${content.title}
+                            </a>
+                            <p>${content.description}</p>
+                        </li>
+                    `;
+                });
+                recommendationHTML += "</ul>";
+            }
+
+            if (learnGenieRecommendations.length !== 0) {
+                recommendationHTML += "<h3>LearnGenie Recommendations:</h3><ul>";
+                learnGenieRecommendations.forEach(text => {
+                    recommendationHTML += `<li><p>${text}</p></li>`;
+                });
+                recommendationHTML += "</ul>";
+            }
+
+            if (recommendationHTML === "") {
+                recommendationHTML = '<p>No recommendations available.</p>';
+            }
+
+            document.getElementById('recommendation-results').innerHTML = recommendationHTML;
+        })
+        .catch(error => {
+            document.getElementById('recommendation-results').innerHTML = '<p>Error fetching recommendations. Please try again later.</p>';
+        });
+});
+
+
+</script>
+{% endblock %}
+

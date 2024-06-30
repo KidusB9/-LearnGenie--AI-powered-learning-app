@@ -1,0 +1,73 @@
+<!-- detailed_content.html -->
+{% extends "base.html" %}
+
+{% block title %}Detailed Content{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        body {
+            font-family: Arial, sans-serif !important;
+            line-height: 1.6 !important;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333 !important;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 36px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        p {
+            font-size: 18px !important;
+            text-align: justify;
+            margin-bottom: 20px;
+            color: #555;
+            line-height: 1.7;
+        }
+        img {
+            max-width: 100% !important;
+            height: auto !important;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .content-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: 20px auto;
+        }
+        .back-button {
+            background-color: #1a73e8 !important;
+            color: white !important;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease;
+            border-radius: 4px;
+        }
+        .back-button:hover {
+            background-color: #155a8a;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="content-container">
+        <h1>Detailed Content</h1>
+        <p>{{ detailed_text | safe }}</p>
+        {% if image_url %}
+            <div>
+                <img src="{{ image_url }}" alt="Generated image">
+            </div>
+        {% endif %}
+        <a class="back-button" href="{{ url_for('index') }}">Back to Generated Content</a>
+
+    </div>
+{% endblock %}
