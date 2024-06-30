@@ -33,15 +33,15 @@ import os
 
 app = Flask(__name__, template_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Templates'))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///learning_platform.db'
-app.config['SECRET_KEY'] = 'e887f52689f0f063b30dcc6fc08d52bf'
+app.config['SECRET_KEY'] = ''
 
 
 #oauth = OAuth(app)
 # Initialize Google OAuth
 #google = oauth.remote_app(
    # 'google',
-  #  consumer_key='541354141268-26u25706gprfrfv2n17gfi3qm4dbaf4n.apps.googleusercontent.com',
-   # consumer_secret='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',
+  #  consumer_key='',
+   # consumer_secret='',
    # request_token_params={
     #    'scope': 'email',
     #},
@@ -524,7 +524,7 @@ def detailed_content():
 def google_login():
     google_auth_url = "https://accounts.google.com/o/oauth2/v2/auth"
     params = {
-        "client_id": "541354141268-26u25706gprfrfv2n17gfi3qm4dbaf4n.apps.googleusercontent.com",
+        "client_id": "",
         "redirect_uri": "https://kidusb.pythonanywhere.com/google_callback",
         "response_type": "code",
         "scope": "email",
@@ -540,8 +540,8 @@ def google_callback():
     google_token_url = "https://oauth2.googleapis.com/token"
     token_data = {
         "code": code,
-        "client_id": "541354141268-26u25706gprfrfv2n17gfi3qm4dbaf4n.apps.googleusercontent.com",
-        "client_secret": "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",
+        "client_id": "",
+        "client_secret": "",
         "redirect_uri": "https://kidusb.pythonanywhere.com/google_callback",
         "grant_type": "authorization_code",
     }
