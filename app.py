@@ -92,7 +92,21 @@ class ContentUserMap(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content_id = db.Column(db.Integer, db.ForeignKey('content.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+   
+class Badge(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), nullable=False)
+    description = db.Column(db.String(256), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = relationship("User", back_populates="badges")
 
+class Content(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    level = db.Column(db.String(32), nullable=True)  # Beginner, Intermediate, Advanced
+    tags = db.Column(db.String(256), nullable=True)  # e.g., "Budgeting, Investing"
 
 class Content(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -157,6 +171,7 @@ class UserProfile(db.Model):
         user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
         bio = db.Column(db.Text, nullable=True)
         interests = db.Column(db.String(256), nullable=True)
+        financial_goals = db.Column(db.String(256), nullable=True) 
         user = relationship("User", back_populates="profile")
 
 
@@ -257,7 +272,7 @@ def _generate_learning_content(user_interest, prompt):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "Generate a lesson plan about:"},
+            {"role": "system", "content": "Generate personalized financial advice:"},
             {"role": "user", "content": f"{user_interest}. {prompt}"}
         ],
         max_tokens=3000,
@@ -283,9 +298,12 @@ def _generate_detailed_content(prompt):
 
 
 
-
-
-
+def recommend_next_steps(user_id):
+    user_progress = Progress.query.filter_by(user_id=user_id).all()
+    mastered_topics = [progress.content_id for progress in user_progress if progress.progress == 100]
+    # Recommend content based on unfinished or partially finished topics
+    recommendations = Content.query.filter(~Content.id.in_(mastered_topics)).limit(5).all()
+    return recommendations
 
 
 def generate_dalle_image(prompt, api_key):
