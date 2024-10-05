@@ -93,20 +93,10 @@ class ContentUserMap(db.Model):
     content_id = db.Column(db.Integer, db.ForeignKey('content.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
    
-class Badge(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
-    description = db.Column(db.String(256), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = relationship("User", back_populates="badges")
 
-class Content(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(128), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    level = db.Column(db.String(32), nullable=True)  # Beginner, Intermediate, Advanced
-    tags = db.Column(db.String(256), nullable=True)  # e.g., "Budgeting, Investing"
+
+
+    
 
 class Content(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -114,8 +104,11 @@ class Content(db.Model):
     title = db.Column(db.String(128), nullable=False)
     description = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text, nullable=False)
+    #user = relationship("User", back_populates="badges")
     #user = relationship("User", back_populates="contents")
     users = db.relationship('User', secondary='content_user_map', back_populates='contents')
+    level = db.Column(db.String(32), nullable=True)  # Beginner, Intermediate, Advanced
+    tags = db.Column(db.String(256), nullable=True)  # e.g., "Budgeting, Investing"
 
 
 
